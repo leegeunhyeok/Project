@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <windows.h>
-#include <time.h>
-
-#include "setting.h"
-#include "data.h"
-
+#include "player.h"
 
 /*총알 발사 초기 설정*/
 void BulletSet(void)

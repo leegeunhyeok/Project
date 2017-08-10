@@ -1,5 +1,5 @@
 #include <time.h>
-#include "setting.h"
+#include "astro.h"
 
 /*------ 색 코드값 열거형 ------*/
 enum 

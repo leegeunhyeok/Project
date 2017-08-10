@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <windows.h>
-#include "data.h"
-
+#include "lib.h"
 
 /*입력버퍼 지우는 함수*/
 void Flush_buffer(void)

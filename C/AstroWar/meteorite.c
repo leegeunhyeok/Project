@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <windows.h>
-#include <time.h>
-
-#include "setting.h"
-#include "data.h"
-
+#include "meteo.h"
 
 void MeteoSpawn(void)
 {

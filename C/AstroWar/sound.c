@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <fmod.h>
-#include <Windows.h> 
-
-#include "data.h"
+#include "sound.h"
 
 FMOD_SYSTEM *g_System; //FMOD system 변수선언
 FMOD_SOUND *g_Sound[5]; 

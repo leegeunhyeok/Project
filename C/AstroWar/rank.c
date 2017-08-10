@@ -1,17 +1,6 @@
-#include <stdio.h>
-#include <windows.h>
-
-#include "data.h"
-
-
-struct info{
-	char name[10];
-	int time;
-	int score;
-};
+#include "rank.h"
 
 struct info rank[11];
-
 
 /*게임이 끝난 후 사용자 이름과 점수,시간을 랭킹에 저장*/
 void AddRank(int time, int score)

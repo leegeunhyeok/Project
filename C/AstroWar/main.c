@@ -1,11 +1,4 @@
-#include <stdio.h>
-#include <windows.h>
-#include <time.h> 
-#include <fmod.h>
-
-#include "setting.h"
-#include "data.h"
-
+#include "astro.h"
 
 int Menu_YPos = 12;
 
@@ -218,7 +211,7 @@ int main(void)
 {
 	int i,n=0, reStart;
 	FileLoad();
-	system("mode con: lines=40"); //세로길이 40
+	system("mode con: lines=40 cols=80"); //세로길이 40, 가로 80 
 	system("title AstroWar"); //실행 타이틀 제목 AstroWar로 설정 
 	CursorHide(); // Cmd창 커서 지우기
 	Init(); //사운드 초기설정 

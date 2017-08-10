@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <windows.h>
-#include <time.h>
-
-#include "setting.h"
-#include "data.h"
-
+#include "dev.h"
 
 /*개발자옵션 On / Off 설정*/
 void Option(void)
