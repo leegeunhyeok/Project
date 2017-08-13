@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane focusTraversable="true" prefHeight="300.0" prefWidth="350.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TabPane prefHeight="300.0" prefWidth="350.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="정보">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Text layoutX="14.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="개발자 : 이근혁">
+                           <effect>
+                              <Reflection />
+                           </effect>
+                        </Text>
+                        <Text layoutX="147.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="E-Mail: lghlove0509@naver.com">
+                           <effect>
+                              <Reflection />
+                           </effect>
+                        </Text>
+                        <Text layoutX="14.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+                        <Pane layoutX="14.0" layoutY="61.0" prefHeight="200.0" prefWidth="322.0" style="-fx-background-color: LightSkyBlue; -fx-background-radius: 10px;">
+                           <children>
+                              <Text fill="#510af7" layoutX="14.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="[ 개발자 블로그 ]">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Text>
+                              <Text fill="WHITE" layoutX="14.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0" text="네이버: blog.naver.com/lghlove0509" />
+                              <Text fill="WHITE" layoutX="14.0" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0" text="T-Story : codevkr.tistory.com" />
+                              <ImageView layoutX="258.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/default_player.png" />
+                                 </image>
+                              </ImageView>
+                              <Text fill="WHITE" layoutX="14.0" layoutY="152.0" strokeType="OUTSIDE" strokeWidth="0.0" text="버전: AstroWar FX Edition 1.02 Release">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Text>
+                              <Text layoutX="14.0" layoutY="176.0" strokeType="OUTSIDE" strokeWidth="0.0" text="본 게임에 대한 모든 이미지 리소스의" />
+                              <Text layoutX="14.0" layoutY="191.0" strokeType="OUTSIDE" strokeWidth="0.0" text="저작권은 개발자에게 있습니다" />
+                              <Text layoutX="232.0" layoutY="190.0" strokeType="OUTSIDE" strokeWidth="0.0" text="©lghlove0509">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </Text>
+                           </children></Pane>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="게임설명">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Pane layoutX="15.0" layoutY="11.0" prefHeight="250.0" prefWidth="320.0" style="-fx-background-color: lightskyblue; -fx-background-radius: 30px;">
+                           <children>
+                              <Text layoutX="14.0" layoutY="26.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- 위에서 내려오는 운석을 맞추는 슈팅게임입니다." />
+                              <Text layoutX="14.0" layoutY="61.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- 시간이 지날수록 운석의 HP, 속도가 증가합니다." />
+                              <Text layoutX="14.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- 운석을 부수면 일정 확률로 아이템이 드랍됩니다." />
+                              <Text layoutX="14.0" layoutY="116.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- 게임이 종료되면 점수에 따라 코인이 지급됩니다." />
+                              <Text layoutX="14.0" layoutY="146.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- 상점에서 플레이어 스킨을 구매할 수 있습니다." />
+                              <Text layoutX="14.0" layoutY="220.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- 플레이 데이터는 모두 저장됩니다." />
+                              <Text fill="RED" layoutX="7.0" layoutY="233.0" strokeType="OUTSIDE" strokeWidth="0.0" text="비정상적으로 게임을 종료하면 데이터가 저장되지 않을 수 있습니다.">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Text>
+                              <Text fill="WHITE" layoutX="25.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="이동: W, A, S, D / 일시정지 메뉴 : ESC" />
+                              <Text layoutX="14.0" layoutY="178.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- 기본점수 : 레이저 갯수 * 20, 아이템 먹으면 +10" />
+                              <Text layoutX="25.0" layoutY="193.0" strokeType="OUTSIDE" strokeWidth="0.0" text="방어막있는 상태로  운석과 충돌시 +40점" />
+                           </children>
+                        </Pane>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+          <Tab text="아이템 설명">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Pane layoutX="16.0" layoutY="14.0" prefHeight="38.0" prefWidth="318.0" style="-fx-background-color: lightgray;">
+                           <children>
+                              <ImageView fitHeight="35.0" fitWidth="35.0" layoutX="14.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/life_up_item.png" />
+                                 </image>
+                              </ImageView>
+                              <Text layoutX="69.0" layoutY="24.0" strokeType="OUTSIDE" strokeWidth="0.0" text="체력을 1 회복합니다. (최대체력 10)" />
+                           </children>
+                        </Pane>
+                        <Pane layoutX="16.0" layoutY="64.0" prefHeight="38.0" prefWidth="318.0" style="-fx-background-color: lightgray;">
+                           <children>
+                              <ImageView fitHeight="35.0" fitWidth="35.0" layoutX="14.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/damage_up_item.png" />
+                                 </image>
+                              </ImageView>
+                              <Text layoutX="69.0" layoutY="24.0" strokeType="OUTSIDE" strokeWidth="0.0" text="공격력을 10 증가시킵니다." />
+                           </children>
+                        </Pane>
+                        <Pane layoutX="16.0" layoutY="112.0" prefHeight="38.0" prefWidth="318.0" style="-fx-background-color: lightgray;">
+                           <children>
+                              <ImageView fitHeight="35.0" fitWidth="35.0" layoutX="14.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/slow_item.png" />
+                                 </image>
+                              </ImageView>
+                              <Text layoutX="69.0" layoutY="24.0" strokeType="OUTSIDE" strokeWidth="0.0" text="일정 시간 동안 운석의 이동속도를 낮춥니다." />
+                           </children>
+                        </Pane>
+                        <Pane layoutX="16.0" layoutY="160.0" prefHeight="38.0" prefWidth="318.0" style="-fx-background-color: lightgray;">
+                           <children>
+                              <ImageView fitHeight="35.0" fitWidth="35.0" layoutX="14.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/shield_item.png" />
+                                 </image>
+                              </ImageView>
+                              <Text layoutX="69.0" layoutY="24.0" strokeType="OUTSIDE" strokeWidth="0.0" text="일정 시간 동안 충돌을 무시합니다." />
+                           </children>
+                        </Pane>
+                        <Pane layoutX="16.0" layoutY="208.0" prefHeight="38.0" prefWidth="318.0" style="-fx-background-color: lightgray;">
+                           <children>
+                              <ImageView fitHeight="35.0" fitWidth="35.0" layoutX="14.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/laser_count_up_item.png" />
+                                 </image>
+                              </ImageView>
+                              <Text layoutX="69.0" layoutY="24.0" strokeType="OUTSIDE" strokeWidth="0.0" text="레이저의 갯수를 1 증가시킵니다. (최대 3개)" />
+                           </children>
+                        </Pane>
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>
