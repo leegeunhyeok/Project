@@ -95,6 +95,7 @@ public class School {
 			// 음식9.13.5 이런 형식으로 급식 메뉴와 알레르기 정보가 합쳐져 있음.
 			// 메뉴와 알레르기 정보 사이에 공백을 집어넣는 작업
 			StringBuffer sb = new StringBuffer();
+			sb.append(parse.charAt(0));
 			boolean first = true;
 			for(int i=0; i<parse.length()-1; i++) {
 				char temp = parse.charAt(i+1);
