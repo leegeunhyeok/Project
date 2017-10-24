@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.CreateServerController">
+   <children>
+      <Text fill="#ff0095" layoutX="304.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="서버 만들기" textAlignment="CENTER">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Text>
+      <Button fx:id="back_btn" layoutX="368.0" layoutY="523.0" mnemonicParsing="false" text="뒤로가기" />
+      <TextArea fx:id="server_log_area" disable="true" editable="false" layoutX="300.0" layoutY="300.0" prefHeight="200.0" prefWidth="200.0" promptText="Log" />
+      <Pane layoutX="300.0" layoutY="150.0" prefHeight="99.0" prefWidth="200.0" style="-fx-background-color: lightgray; -fx-background-radius: 30px;">
+         <children>
+            <Text layoutX="88.0" layoutY="26.0" strokeType="OUTSIDE" strokeWidth="0.0" text="포트" />
+            <TextField fx:id="port_area" layoutX="31.0" layoutY="35.0" promptText="서버 포트" text="7777" />
+            <Button fx:id="create_server_btn" layoutX="80.0" layoutY="67.0" mnemonicParsing="false" text="생성" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

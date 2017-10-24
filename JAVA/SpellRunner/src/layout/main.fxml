@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
+   <children>
+      <ImageView fitHeight="600.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../image/main_background.png" />
+         </image></ImageView>
+      <Button fx:id="create_btn" layoutX="570.0" layoutY="130.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="140.0" text="Create Server" />
+      <Button fx:id="join_btn" layoutX="570.0" layoutY="200.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="140.0" text="Join" />
+      <Button fx:id="info_btn" layoutX="570.0" layoutY="270.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="140.0" text="Information" />
+      <Button fx:id="exit_btn" layoutX="570.0" layoutY="340.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="140.0" text="Exit" />
+      <Text layoutX="700.0" layoutY="583.0" strokeType="OUTSIDE" strokeWidth="0.0" text="개발자 : 이근혁" wrappingWidth="85.12109375" />
+      <Text layoutX="38.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Spell Runner" wrappingWidth="400.0">
+         <font>
+            <Font size="65.0" />
+         </font>
+         <fill>
+            <LinearGradient endX="1.0" endY="1.0" startX="1.0" startY="0.3380952380952381">
+               <stops>
+                  <Stop color="BLACK" />
+                  <Stop color="WHITE" offset="1.0" />
+               </stops>
+            </LinearGradient>
+         </fill>
+      </Text>
+   </children>
+</AnchorPane>
