@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+        <title>Rastro</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/index.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            <div class="btn-group pull-right">
+		<% if(name == null){ %> 
+                	<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#loginModal">로그인</button>
+                	<button class="btn btn-default btn-sm" id="create-account-btn">회원가입</button>
+	    	<% } else { %>
+			<button class="btn btn-default btn-sm" id="logout-btn">Logout</button>
+		<% } %>		
+                
+                <!-- Modal -->
+                <div class="modal fade" id="loginModal" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title text-info">로그인</h4>
+                            </div>
+                                    
+                            <div class="modal-body">
+                                <form action="login" method="post">
+                                    <div class="form-group">
+                                        <label for="email">이메일</label>
+                                        <input type="email" class="form-control" name="email" placeholder="E-mail">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pwd">비밀번호</label>
+                                        <input type="password" class="form-control" name="password" placeholder="Password">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">제출</button>
+                                </form>
+                                </div>
+                                    
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="row">
+                <img src="image/logo.png" class="col-xs-12 col-lg-4">
+            </div>
+            <div class="row">
+                    <div class="container-fluid">
+                        <ul class="nav nav-pills" id="top-menu">
+                            <li class="active"><a data-toggle="tab" href="#home">홈</a></li>
+                            <li><a data-toggle="tab" href="#info">정보</a></li>
+                        </ul>
+                    </div>
+            </div>
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="tab-content">
+                            <div id="home" class="tab-pane fade in active">
+                                <p>Content</p>
+                            </div>
+                            <div id="info" class="tab-pane fade">
+                                <h1 class="text-danger text-center font-acme">Rastro</h1>
+                                <br>
+                                <br>
+                                <p class="text-center">현재 레이아웃만 대충 구성하였음</p>
+                                <p class="text-center">로그인 기능은 추후에 DB 연동 후 진행할것임</p>
+                                <p class="text-center">서버는 라즈베리파이3 모델로 구동 중</p>
+                                <br>
+                                <p class="text-center">Server Machine - <strong class="font-acme">Raspberry PI 3</strong></p>
+                                <p class="text-center text-info">관리/개발자: <strong>이근혁</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        Footer (페이지 하단)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="js/jquery-3.2.1.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/index.js"></script>
+    </body>
+</html>

@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css?family=Acme');
+
+body {
+    padding-top: 10px;
+}
+
+.font-acme {
+    font-family: 'Acme', sans-serif;
+}
+
+#top-menu {
+    margin-bottom: 5px;
+}
+
+#panel-google {
+    background-color: #e55b50;
+}
+
+#panel-kakao {
+    background-color: #ebb228;
+}
+
+#panel-naver {
+    background-color: #3a8841;
+}
+
+#panel-tistory{
+    background-color: #3b5998;
+}
