@@ -9,40 +9,42 @@
     </head>
     <body>
         <div class="container">
-	<% if(name == null){ %>
-	<div class="btn-group pull-right">	
-		<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#loginModal">로그인</button>
-               	<button class="btn btn-default btn-sm" id="create-account-btn">회원가입</button>
-	</div>
-	<% } else { %>
-	<div class="pull-right">
-		<tt class="text-info"><%= name %> 님</tt>
-        <button class="btn btn-default btn-sm" id="mypage-btn">내 정보</button>
-		<button class="btn btn-default btn-sm" id="logout-btn">로그아웃</button>
-	</div>
-	<% } %>		
+            <% if(name == null){ %>
+            <div class="btn-group pull-right">	
+                <button class="btn btn-primary btn-md" data-toggle="modal" data-target="#loginModal">로그인</button>
+                <button class="btn btn-default btn-md" id="join-btn">회원가입</button>
+            </div>
+            <% } else { %>
+            <div style="float: right;">   
+                <div class="btn-group">
+                    <button class="btn btn-default btn-md" id="mypage-btn">내 정보</button>
+                    <button class="btn btn-default btn-md" id="logout-btn">로그아웃</button>
+                </div>
+                <div class="text-info font-hanna" id="my-name"><%= name %> 님 </div>
+            </div>
+            <% } %>		
             
-        <!-- Modal -->
-        <div class="modal fade" id="loginModal" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title text-info">로그인</h4>
-                    </div>
+            <!-- Modal -->
+            <div class="modal fade" id="loginModal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title text-info">로그인</h4>
+                        </div>
                                 
-                    <div class="modal-body">
-                        <form action="login" method="post">
-                            <div class="form-group">
-                                <label for="email">이메일</label>
-                                <input type="email" class="form-control" name="email" placeholder="E-mail">
-                            </div>
-                            <div class="form-group">
-                                <label for="pwd">비밀번호</label>
-                                <input type="password" class="form-control" name="password" placeholder="Password">
-                            </div>
-                            <button type="submit" class="btn btn-primary">제출</button>
-                        </form>
-			</div>
+                        <div class="modal-body">
+                            <form action="process/login" method="post">
+                                <div class="form-group">
+                                    <label for="email">이메일</label>
+                                    <input type="email" class="form-control" name="id" id="input-id" placeholder="E-mail">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pwd">비밀번호</label>
+                                    <input type="password" class="form-control" name="password" id="input-password" placeholder="Password">
+                                </div>
+                                <button type="submit" class="btn btn-primary">제출</button>
+                            </form>
+                        </div>
                                 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
@@ -51,15 +53,15 @@
                 </div>
             </div>
             <div class="row">
-                <img src="image/logo.png" class="col-xs-12 col-lg-4">
+                <a href="/" title="메인으로"><img src="image/logo.png" class="col-xs-12 col-sm-6 col-md-6 col-lg-4"></a>
             </div>
             <div class="row">
-                    <div class="container-fluid">
-                        <ul class="nav nav-pills" id="top-menu">
-                            <li class="active"><a data-toggle="tab" href="#home">홈</a></li>
-                            <li><a data-toggle="tab" href="#info">정보</a></li>
-                        </ul>
-                    </div>
+                <div class="container">
+                    <ul class="nav nav-pills" id="top-menu">
+                        <li class="active"><a data-toggle="tab" href="#home">홈</a></li>
+                        <li><a data-toggle="tab" href="#info">정보</a></li>
+                    </ul>
+                </div>
             </div>
             <div class="row">
                 <div class="panel panel-default">
@@ -69,20 +71,76 @@
                                 <p>Content</p>
                             </div>
                             <div id="info" class="tab-pane fade">
-                                <h1 class="text-danger text-center font-acme">Rastro</h1>
+                                <h1 class="text-danger text-center">[ Rastro ]</h1>
                                 <br>
+                                <center>    
+                                    <a href="https://www.raspberrypi.org/"><img src="image/raspberry.png" title="Raspberry PI"></a>
+                                    <br>
+                                    <br>
+                                    <button data-toggle="collapse" data-target="#more-info" class="btn btn-lg">정보 더 보기</button>
+                                </center>
+                                <div id="more-info" class="collapse text-center">
+                                    <hr>
+                                    <h2>Server <small>Node.js</small></h2>
+                                    <button data-toggle="collapse" data-target="#more-info-modules" class="btn btn-xs">모듈</button>
+                                    <div id="more-info-modules" class="collapse">
+                                        <div class="info-area"> 
+                                            <div class="panel panel-info">
+                                                <div class="panel-heading">
+                                                    <h2>package.json</h2>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <h4>
+                                                        "body-parser": "^1.18.2"<br>
+                                                        "cookie-parser": "^1.4.3"<br>
+                                                        "ejs": "^2.5.7"<br>
+                                                        "express": "^4.16.2"<br>
+                                                        "express-session": "^1.15.6"<br>
+                                                        "fs": "0.0.1-security"<br>
+                                                        "http": "0.0.0"<br>
+                                                        "mongoose": "^4.13.0"<br>
+                                                        "path": "^0.12.7"<br>
+                                                        "serve-static": "^1.13.1"<br>
+                                                    </h4>
+                                                </div>
+                                                <div class="panel-footer">
+                                                    <h4>본 서버는 <b>Raspberry PI 3</b> 으로 구동되고 있습니다</h4>
+                                                </div>
+                                            </div>
+                                        </div>       
+                                    </div>
+                                    <br>
+                                    <hr>
+                                    <h2>Client</h2>
+                                    <button data-toggle="collapse" data-target="#more-info-client" class="btn btn-xs">정보</button>
+                                    <div id="more-info-client" class="collapse">
+                                        <div class="info-area"> 
+                                            <div class="panel panel-info">
+                                                <div class="panel-body">
+                                                    <h4>
+                                                        HTML<br>
+                                                        JavaScript<br>
+                                                        JQuery<br>
+                                                        Ajax<br>
+                                                        CSS<br>
+                                                        Bootstrap<br>
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                        </div>       
+                                    </div>
+                                </div>
                                 <br>
-                                <p class="text-center">현재 레이아웃만 대충 구성하였음</p>
-                                <p class="text-center">로그인 기능은 추후에 DB 연동 후 진행할것임</p>
-                                <p class="text-center">서버는 라즈베리파이3 모델로 구동 중</p>
-                                <br>
-                                <p class="text-center">Server Machine - <strong class="font-acme">Raspberry PI 3</strong></p>
-                                <p class="text-center text-info">관리/개발자: <strong>이근혁</strong></p>
+                                <hr>
+                                <p class="text-center">Server Machine - <strong>Raspberry PI 3</strong></p>
+                                <p class="text-center text-info">관리/개발자: 이근혁</p>
                             </div>
                         </div>
                     </div>
                     <div class="panel-footer">
-                        Footer (페이지 하단)
+                        <div class="text-center" id="footer-info">
+                            Raspberry PI 3 Server<br>by<br>이근혁
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,29 +1,87 @@
-@import url('https://fonts.googleapis.com/css?family=Acme');
+@import url(http://fonts.googleapis.com/earlyaccess/hanna.css);
 
 body {
-    padding-top: 10px;
+    font-family: 'Hanna', serif;
 }
 
-.font-acme {
-    font-family: 'Acme', sans-serif;
+@media (min-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+    
+    #my-name {
+        font-size: 10px;
+    }
+    
+    .info-area {
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+}
+
+@media (min-width: 992px) {
+    body {
+        font-size: 18px;
+    }
+    
+    #my-name {
+        font-size: 18px;
+    }
+    
+    .info-area {
+        margin-left: 20%;
+        margin-right: 20%;
+    }
+}
+
+@media (min-width: 1200px) {
+    body {
+        font-size: 18px;
+    }
+    
+    #my-name {
+        font-size: 20px;
+    }
+    
+    .info-area {
+        margin-left: 30%;
+        margin-right: 30%;
+    }
+}
+
+.font-hanna {	
+    font-family: 'Hanna', serif;
+}
+
+.btn-group {
+    margin-top: 20px;
 }
 
 #top-menu {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+}
+    
+#footer-info {
+    font-size: 12px;
 }
 
-#panel-google {
-    background-color: #e55b50;
+.bg-1 {
+    background-color: #ffb3ba;
 }
 
-#panel-kakao {
-    background-color: #ebb228;
+.bg-2 {
+    background-color: #ffffba;
 }
 
-#panel-naver {
-    background-color: #3a8841;
+.bg-3 {
+    background-color: #baffc9;
 }
 
-#panel-tistory{
-    background-color: #3b5998;
+.bg-4 {
+    background-color: #bae1ff;
+}
+
+.bg-5 {
+    background-color: #37474f;
+    color: white;
 }
