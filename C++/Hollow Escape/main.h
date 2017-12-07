@@ -1,12 +1,5 @@
 #ifndef VERSION
-#define VERSION "1.0.0"
-#endif
-
-#ifndef __SETTING__
-#define __SETTING__
-
-#include "setting.h"
-
+#define VERSION "1.0.1"
 #endif
 
 

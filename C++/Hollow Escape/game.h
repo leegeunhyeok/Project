@@ -17,12 +17,16 @@ class Game {
 		bool checkpoint;
 		bool hasShadow;
 		bool changedSpawnpoint;
+		bool needEssence;
 		int shooterCnt;
 		int objectDelay;
 		int delay;
 		int flag;
 		int key;
 		int hp;
+		int totalEssence;
+		int essence;
+		int essencePos[40]; // MAX essence: 20
 		int locked[10];
 		struct pos shooter[100];
 		void objectMgr();
@@ -41,7 +45,7 @@ class Game {
 		void drawTitle();
 		int drawMenu(const int, const int, const int);
 		int drawMapList();
-		void drawMap();
+		void drawMap(const int);
 		void drawUI();
 		int drawPauseMenu();
 		void drawPlayer(const int, const int);
@@ -76,6 +80,19 @@ enum{
 	DR_DOWN,
 	ENTER,
 	ESCAPE
+};
+
+#endif
+
+#ifndef __MAP_LIST_
+#define __MAP_LIST_
+
+enum {
+	CROSSROAD,
+	GREENPATH,
+	CRYSTAL,
+	WATERWAY,
+	WHITEPALACE
 };
 
 #endif

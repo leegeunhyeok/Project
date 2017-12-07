@@ -8,7 +8,7 @@ class Sound {
 		void Init();
 		void Load();
 		FMOD_SYSTEM* system;
-		FMOD_SOUND* sound[10]; 
+		FMOD_SOUND* sound[15]; 
 		FMOD_CHANNEL* channel = NULL;
 		FMOD_BOOL isPlaying;
 		
@@ -35,7 +35,10 @@ enum {
 	PUSH,
 	DAMAGE,
 	DEATH,
-	GET_SHADOW
+	GET_SHADOW,
+	DREAM,
+	GET_ESSENCE,
+	LAST
 };
 
 #endif
