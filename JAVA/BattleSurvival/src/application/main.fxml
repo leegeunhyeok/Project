@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: darkgray;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
+   <children>
+      <ImageView fitHeight="89.0" fitWidth="589.0" layoutX="163.0" layoutY="60.0" pickOnBounds="true" preserveRatio="true" style="-fx-opacity: 90%;">
+         <image>
+            <Image url="@../image/title.png" />
+         </image>
+      </ImageView>
+      <Pane layoutX="300.0" layoutY="300.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: goldenrod; -fx-border-width: 5px;">
+         <children>
+            <Text fill="WHITE" layoutX="38.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Join Server">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="38.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Single Play">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="78.0" layoutY="181.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Exit">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="22.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Create Server">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Text>
+            <Pane fx:id="create" layoutY="13.0" onMouseExited="#exited" prefHeight="28.0" prefWidth="200.0" style="-fx-background-color: black; -fx-opacity: 0;">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Pane>
+            <Pane fx:id="join" layoutY="61.0" onMouseExited="#exited" prefHeight="28.0" prefWidth="200.0" style="-fx-background-color: black; -fx-opacity: 0;">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Pane>
+            <Pane fx:id="single" layoutY="111.0" onMouseExited="#exited" prefHeight="28.0" prefWidth="200.0" style="-fx-background-color: black; -fx-opacity: 0;">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Pane>
+            <Pane fx:id="exit" layoutY="158.0" onMouseExited="#exited" prefHeight="28.0" prefWidth="200.0" style="-fx-background-color: black; -fx-opacity: 0;">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Pane>
+         </children>
+      </Pane>
+      <Text fill="WHITE" layoutX="690.0" layoutY="583.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Test Version 0.1" />
+   </children>
+</AnchorPane>
