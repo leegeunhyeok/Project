@@ -5,7 +5,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 public class MainController {
-	private final double selectedOpacity = 0.1;
+	private final double selectedOpacity = 0.3;
 	@FXML private Pane create;
 	@FXML private Pane join;
 	@FXML private Pane single;
@@ -18,7 +18,7 @@ public class MainController {
 	    });
 	    
 	    create.setOnMouseClicked((e)->{
-	    	System.out.println("Create server");
+	    	Main.program.changeScene(SceneCode.CREATE_SERVER);
 	    });
 	    
 	    join.setOnMouseEntered((e)->{
@@ -26,7 +26,7 @@ public class MainController {
 	    });
 	    
 	    join.setOnMouseClicked((e)->{
-	    	System.out.println("Join server");
+	    	Main.program.changeScene(SceneCode.JOIN);
 	    });
 	    
 	    single.setOnMouseEntered((e)->{

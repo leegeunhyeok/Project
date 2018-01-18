@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.JoinController">
+   <children>
+      <ImageView fitHeight="600.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../image/background.png" />
+         </image>
+      </ImageView>
+      <Pane layoutX="250.0" layoutY="100.0" prefHeight="400.0" prefWidth="300.0" style="-fx-background-color: black; -fx-opacity: 0.8; -fx-border-color: goldenrod; -fx-border-width: 5px;" />
+      <Pane layoutX="300.0" layoutY="125.0" prefHeight="350.0" prefWidth="200.0">
+         <children>
+            <TextField layoutX="25.0" layoutY="68.0" prefHeight="23.0" prefWidth="150.0" promptText="IP" />
+            <TextField layoutX="25.0" layoutY="152.0" prefHeight="23.0" prefWidth="150.0" promptText="Port" />
+            <Button layoutX="80.0" layoutY="313.0" mnemonicParsing="false" text="접속" />
+            <Text fill="WHITE" layoutX="73.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="호스트">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="82.0" layoutY="147.0" strokeType="OUTSIDE" strokeWidth="0.0" text="포트">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Text>
+         </children>
+      </Pane>
+      <ImageView fx:id="backBtn" fitHeight="50.0" fitWidth="50.0" layoutX="736.0" layoutY="536.0" pickOnBounds="true" preserveRatio="true">
+      	 <image>
+            <Image url="@../image/back.png" />
+         </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ImageView>
+      <Text fill="WHITE" layoutX="297.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="[ 서버에 참가하기 ]">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Text>
+   </children>
+</AnchorPane>
