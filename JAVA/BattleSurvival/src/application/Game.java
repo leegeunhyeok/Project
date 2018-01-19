@@ -5,7 +5,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Random;
+import java.util.StringTokenizer;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
@@ -16,56 +21,54 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 
 public class Game {
-	private boolean running;
+	private boolean playing, running;
 	private final int playerSize = 20;
 	private final int blockSize = 50;
 	private final int SPEED = 1;
 	
 	private double staticX, staticY;
-	private double x, y;
-	private double x2, y2;
 	private double showPosX, showPosY;
+	private Player player1, player2;
 	private final char MAP[][] = new char[100][100];
 	
 	// 북, 남, 동, 서
 	private boolean moveNorth, moveSouth, moveEast, moveWest;
-	
-	private DataInputStream in;
-	private DataOutputStream out;
+	private StringTokenizer token;
+	private AnimationTimer game;
 	private GraphicsContext gc;
+	private Reciver reciver;
+	private Sender sender;
 	
 	@SuppressWarnings("null")
-	public Game(Socket socket) {
-		loadMap("map1.dat");
-		staticX = Main.width/2 - playerSize/2;
-		staticY = Main.height/2 - playerSize/2;
-		x = y = x2 = y2 = 0;
+	public Game(Socket socket, final boolean isServer) {
 		if(socket == null) {
+			System.out.println("Single play");
+		} else {
 			try {
-				in = new DataInputStream(socket.getInputStream());
-				out = new DataOutputStream(socket.getOutputStream());
-				Main.program.gameStart(null);
-			
-				AnimationTimer game = new AnimationTimer() {
+				game = new AnimationTimer() {
 					@Override
 					public void handle(long now) {
+						int x = player1.getX();
+						int y = player1.getY();
+							
 						final int speed = running ? SPEED*2 : SPEED; // 달리기 = 이동속도*2
 						if(moveNorth && y-speed >= 0) y-=speed;
 						if(moveSouth && y+speed <= 5000) y+=speed;
 						if(moveEast && x+speed <= 5000) x+=speed;
 						if(moveWest && x-speed >= 0) x-=speed;
-				    	draw();
+						player1.setPos(x, y);
+					    draw();
 					}
-				};
-				game.start();
-				
+				};	
 			} catch(Exception e) {
+				e.printStackTrace();
 				Main.program.changeScene(SceneCode.ERROR);
 			}
-		} else {
-			System.out.println("Single play");
 		}
-	}
+		gameInit(isServer, socket);
+		Main.program.gameStart(gameScene());
+		game.start();
+	} 
 	
 	private Scene gameScene() {
 		Group root = new Group();
@@ -157,16 +160,52 @@ public class Game {
 			}
 			System.out.println("Map load done");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println("Map load fail");
 		}
 	}
 	
+	private void gameInit(final boolean isServer, Socket socket) {
+		staticX = Main.width/2 - playerSize/2; // 플레이어는 항상 화면 중앙에 출력 
+		staticY = Main.height/2 - playerSize/2; // 중앙에 출력하기 위한 좌표값 계산작업 
+		
+		Random random = new Random();
+		final int mapCode = random.nextInt(1);
+		if(isServer) {
+			int x = 55;//random.nextInt(5000)+1;
+			int y = 75;//random.nextInt(500)+1;
+			int x2 = 100; //random.nextInt(5000)+1;
+			int y2 = 250; //random.nextInt(500)+4501;
+			player1 = new Player(x, y); // 0~5000, 0~500
+			player2 = new Player(x2, y2); // 0~5000, 4500~5000
+		}
+		
+		loadMap("map1.dat");
+		
+		try {
+			reciver = new Reciver(new DataInputStream(socket.getInputStream()));
+			sender = new Sender(new DataOutputStream(socket.getOutputStream()));
+			playing = true;
+			reciver.start();
+			sender.start();
+		} catch(Exception e) {
+			System.out.println("Data stream error");
+		}
+	}
+	
+	private int toInt(final String str) {
+		return Integer.parseInt(str);
+	}
+	
 	private void draw() {
+		int x = player1.getX();
+		int y = player1.getY();
+		int x2 = player2.getX();
+		int y2 = player2.getY();
+		
 		// 플레이어 위치기준으로 몇번째인덱스부터 출력할지 계산
-		int x_ = (int)Math.floor(x/800 * 16)-8;
-		int y_ = (int)Math.floor(y/600 * 12)-6;
+		int x_ = (int)Math.floor(x/50)-8;
+		int y_ = (int)Math.floor(y/50)-6;
 		for(int height=0; height<13; height++) { // height block: 12 +1
 			for(int width=0; width<25; width++) { // width block: 16 +1
 				try {
@@ -194,16 +233,15 @@ public class Game {
 		}
 		
 		// 플레이어 
-		gc.setFill(Color.BEIGE);
-		gc.setStroke(Color.BROWN);
+		gc.setFill(Color.DODGERBLUE);
+		gc.setStroke(Color.BLUE);
 		gc.fillOval(staticX, staticY, playerSize, playerSize);
 		gc.strokeOval(staticX, staticY, playerSize, playerSize);
 		
-		int circleSize = 600; // 원 크기(지름)
-		//gc.setFill(Color.RED);
-		gc.setStroke(Color.BLUE);
-		gc.strokeOval((x2+400-circleSize/2)-x, (y2-300+circleSize/2)-y, circleSize, circleSize);
-		
+		gc.setFill(Color.CRIMSON);
+		gc.setStroke(Color.BROWN);
+		gc.fillOval((x2+400-playerSize/2)-x, (y2+280+playerSize/2)-y, playerSize, playerSize);
+		gc.strokeOval((x2+400-playerSize/2)-x, (y2+280+playerSize/2)-y, playerSize, playerSize);
 		
 		
 		// Line (Aim, 시야)
@@ -212,5 +250,62 @@ public class Game {
 		gc.strokeLine(staticX+playerSize/2, staticY+playerSize/2, showPosX, showPosY);
 		gc.fillOval(showPosX-3, showPosY-3, 6, 6);
 		gc.strokeOval(showPosX-10, showPosY-10, 20, 20);
+	}
+	
+	private class Reciver extends Thread {
+		private DataInputStream in = null;
+		
+		public Reciver(DataInputStream in) {
+			super();
+			this.setDaemon(true);
+			this.in = in;
+		}
+
+		@Override
+		public void run() {
+			while(playing) {
+				try {
+					String recived = in.readUTF();
+					String[] data = recived.split(",");
+					if(player1 == null || player2 == null) {
+						player1 = new Player(toInt(data[2]), toInt(data[3]));
+						player2 = new Player(toInt(data[0]), toInt(data[1]));
+					}
+					player1.setPos(toInt(data[2]), toInt(data[3]));
+					player2.setPos(toInt(data[0]), toInt(data[1]));
+				} catch(Exception e) {
+					e.printStackTrace();
+				} 
+			}
+		}
+	}
+	
+	private class Sender extends Thread {
+		private DataOutputStream out = null;
+		
+		public Sender(DataOutputStream out) {
+			super();
+			this.setDaemon(true);
+			this.out = out;
+		}
+		
+		@Override
+		public void run() {
+			while(playing) {
+				try {
+					out.writeUTF(getPlayers());
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		private String getPlayers() {
+			int x = player1.getX();
+			int y = player1.getY();
+			int x2 = player2.getX();
+			int y2 = player2.getY();
+			return x+","+y+","+x2+","+y2;
+		}
 	}
 }

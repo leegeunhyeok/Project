@@ -3,8 +3,11 @@ package application;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 public class MainController {
+	private final String url = "../sound/hover.mp3";
 	private final double selectedOpacity = 0.3;
 	@FXML private Pane create;
 	@FXML private Pane join;
@@ -18,6 +21,7 @@ public class MainController {
 	    });
 	    
 	    create.setOnMouseClicked((e)->{
+	    	Main.program.playClickSound();
 	    	Main.program.changeScene(SceneCode.CREATE_SERVER);
 	    });
 	    
@@ -26,6 +30,7 @@ public class MainController {
 	    });
 	    
 	    join.setOnMouseClicked((e)->{
+	    	Main.program.playClickSound();
 	    	Main.program.changeScene(SceneCode.JOIN);
 	    });
 	    
@@ -34,6 +39,7 @@ public class MainController {
 	    });
 	    
 	    single.setOnMouseClicked((e)->{
+	    	Main.program.playClickSound();
 	    	System.out.println("Single Play");
 	    });
 	    

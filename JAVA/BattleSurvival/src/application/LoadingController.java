@@ -5,12 +5,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
 public class LoadingController {
+	private Connection conn = null;
 	@FXML Text message;
 	@FXML ImageView backBtn;
 	
 	@FXML
 	private void initialize() {
-		backBtn.setOnMouseClicked((e)->{;
+		backBtn.setOnMouseClicked((e)->{
+			conn.stopConnection();
+			Main.program.playClickSound();
 			Main.program.changeScene(SceneCode.MAIN);
 		});
 		
@@ -21,6 +24,10 @@ public class LoadingController {
 		backBtn.setOnMouseExited((e)->{
 			backBtn.setOpacity(1);
 		});
+	}
+	
+	public void setConnector(Connection conn) {
+		this.conn = conn;
 	}
 	
 	public void setMsg(final String msg) {

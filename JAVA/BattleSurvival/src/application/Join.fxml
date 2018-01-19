@@ -20,9 +20,9 @@
       <Pane layoutX="250.0" layoutY="100.0" prefHeight="400.0" prefWidth="300.0" style="-fx-background-color: black; -fx-opacity: 0.8; -fx-border-color: goldenrod; -fx-border-width: 5px;" />
       <Pane layoutX="300.0" layoutY="125.0" prefHeight="350.0" prefWidth="200.0">
          <children>
-            <TextField layoutX="25.0" layoutY="68.0" prefHeight="23.0" prefWidth="150.0" promptText="IP" />
-            <TextField layoutX="25.0" layoutY="152.0" prefHeight="23.0" prefWidth="150.0" promptText="Port" />
-            <Button layoutX="80.0" layoutY="313.0" mnemonicParsing="false" text="접속" />
+            <TextField fx:id="hostField" layoutX="25.0" layoutY="68.0" prefHeight="23.0" prefWidth="150.0" promptText="IP" />
+            <TextField fx:id="portField" layoutX="25.0" layoutY="152.0" prefHeight="23.0" prefWidth="150.0" promptText="Port" />
+            <Button fx:id="connectBtn" layoutX="80.0" layoutY="313.0" mnemonicParsing="false" text="접속" />
             <Text fill="WHITE" layoutX="73.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="호스트">
                <font>
                   <Font size="18.0" />
@@ -33,6 +33,7 @@
                   <Font size="18.0" />
                </font>
             </Text>
+            <Text fx:id="portError" fill="RED" layoutX="44.0" layoutY="187.0" strokeType="OUTSIDE" strokeWidth="0.0" text="포트를 확인해주세요" visible="false" />
          </children>
       </Pane>
       <ImageView fx:id="backBtn" fitHeight="50.0" fitWidth="50.0" layoutX="736.0" layoutY="536.0" pickOnBounds="true" preserveRatio="true">

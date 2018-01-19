@@ -7,6 +7,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -67,12 +69,23 @@ public class Main extends Application {
 		stage.setScene(scene);
 	}
 	
-	protected void setLoadingMsg(final String msg) {
+	protected void setLoadingMsg(final String msg, Connection conn) {
 		loadingController.setMsg(msg);
+		loadingController.setConnector(conn);
 	}
 	
 	protected void setErrorMsg(final String msg) {
 		errorController.setMsg(msg);
+	}
+	
+	protected void playClickSound() {
+		Thread sound = new Thread(()->{
+			Media media = new Media(getClass().getResource("../sound/hover.mp3").toString());
+			MediaPlayer player = new MediaPlayer(media);
+			player.play();
+		});
+		sound.setDaemon(true);
+		sound.start();
 	}
 	
 	// 메인화면을 FXML파일을 참조하여 로딩

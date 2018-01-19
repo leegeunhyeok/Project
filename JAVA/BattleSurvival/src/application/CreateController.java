@@ -2,6 +2,7 @@ package application;
 
 import java.net.Socket;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -18,7 +19,8 @@ public class CreateController {
 	
 	@FXML
 	private void initialize() {
-		backBtn.setOnMouseClicked((e)->{;
+		backBtn.setOnMouseClicked((e)->{
+			Main.program.playClickSound();
 			Main.program.changeScene(SceneCode.MAIN);
 		});
 		
@@ -44,13 +46,20 @@ public class CreateController {
 	
 	// 서버 소켓작업은 다른 스레드에서 진행
 	private void createServer(final int port) {
-		Main.program.changeScene(SceneCode.LOADING);
-		Main.program.setLoadingMsg("클라이언트 접속 대기 중..");
 		socket = null;
-		Connection conn = new Connection(false);
+		Connection conn = new Connection(true);
+		Main.program.changeScene(SceneCode.LOADING);
+		Main.program.setLoadingMsg("클라이언트 접속 대기 중..", conn);
 		Thread thread = new Thread(()-> {
 			socket = conn.createServer(port);
-			System.out.println("연결 됨.");
+			if(socket != null) {
+				Platform.runLater(new Runnable() {
+	                @Override 
+	                public void run() {
+	                	Game game = new Game(socket, true);
+	                }
+	            });	
+			}
 		});
 		thread.setDaemon(true);
 		thread.start();
