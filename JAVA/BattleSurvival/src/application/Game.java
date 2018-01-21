@@ -6,9 +6,11 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Random;
 import java.util.StringTokenizer;
 
@@ -38,37 +40,78 @@ public class Game {
 	private GraphicsContext gc;
 	private Reciver reciver;
 	private Sender sender;
+
 	
-	@SuppressWarnings("null")
-	public Game(Socket socket, final boolean isServer) {
-		if(socket == null) {
-			System.out.println("Single play");
-		} else {
-			try {
-				game = new AnimationTimer() {
-					@Override
-					public void handle(long now) {
-						int x = player1.getX();
-						int y = player1.getY();
-							
-						final int speed = running ? SPEED*2 : SPEED; // 달리기 = 이동속도*2
-						if(moveNorth && y-speed >= 0) y-=speed;
-						if(moveSouth && y+speed <= 5000) y+=speed;
-						if(moveEast && x+speed <= 5000) x+=speed;
-						if(moveWest && x-speed >= 0) x-=speed;
-						player1.setPos(x, y);
-					    draw();
-					}
-				};	
-			} catch(Exception e) {
-				e.printStackTrace();
-				Main.program.changeScene(SceneCode.ERROR);
-			}
+	public Game() {
+		//Single play
+	}
+	
+	// Server
+	public Game(Socket socket, final int port) {
+		staticX = Main.width/2 - playerSize/2; // 플레이어는 항상 화면 중앙에 출력 
+		staticY = Main.height/2 - playerSize/2; // 중앙에 출력하기 위한 좌표값 계산작업 
+		Random random = new Random();
+		final int mapCode = random.nextInt(1);
+		int x = 100;//random.nextInt(5000)+1;
+		int y = 100;//random.nextInt(500)+1;
+		int x2 = 200; //random.nextInt(5000)+1;
+		int y2 = 200; //random.nextInt(500)+4501;
+		player1 = new Player(x, y); // 0~5000, 0~500
+		player2 = new Player(x2, y2); // 0~5000, 4500~5000
+		sendInfo(socket);
+		
+		loadMap("map1.dat");
+		
+		try {
+			reciver = new Reciver(port);
+			sender = new Sender(socket.getInetAddress(), 7777);
+			playing = true;
+			reciver.start();
+			sender.start();
+		} catch(Exception e) {
+			System.out.println("Data stream error");
 		}
-		gameInit(isServer, socket);
-		Main.program.gameStart(gameScene());
+		start();
+	}
+	
+	// Client
+	public Game(Socket socket, final String host, final int port) {
+		staticX = Main.width/2 - playerSize/2; // 플레이어는 항상 화면 중앙에 출력 
+		staticY = Main.height/2 - playerSize/2; // 중앙에 출력하기 위한 좌표값 계산작업 
+		loadMap("map1.dat");
+		reciveInfo(socket);
+		
+		try {
+			reciver = new Reciver(7777);
+			sender = new Sender(socket.getInetAddress(), port);
+			playing = true;
+			reciver.start();
+			sender.start();
+		} catch(Exception e) {
+			System.out.println("Data stream error");
+		}
+		start();
+	}
+	
+	private void start() {
+		game = new AnimationTimer() {
+			@Override
+			public void handle(long now) {
+				int x = player1.getX();
+				int y = player1.getY();
+					
+				final int speed = running ? SPEED*2 : SPEED; // 달리기 = 이동속도*2
+				if(moveNorth && y-speed >= 0) y-=speed;
+				if(moveSouth && y+speed <= 5000) y+=speed;
+				if(moveEast && x+speed <= 5000) x+=speed;
+				if(moveWest && x-speed >= 0) x-=speed;
+				player1.setPos(x, y);
+			    draw();
+			}
+		};
 		game.start();
-	} 
+		Main.program.gameStart(gameScene());
+	}
 	
 	private Scene gameScene() {
 		Group root = new Group();
@@ -165,36 +208,28 @@ public class Game {
 		}
 	}
 	
-	private void gameInit(final boolean isServer, Socket socket) {
-		staticX = Main.width/2 - playerSize/2; // 플레이어는 항상 화면 중앙에 출력 
-		staticY = Main.height/2 - playerSize/2; // 중앙에 출력하기 위한 좌표값 계산작업 
-		
-		Random random = new Random();
-		final int mapCode = random.nextInt(1);
-		if(isServer) {
-			int x = 55;//random.nextInt(5000)+1;
-			int y = 75;//random.nextInt(500)+1;
-			int x2 = 100; //random.nextInt(5000)+1;
-			int y2 = 250; //random.nextInt(500)+4501;
-			player1 = new Player(x, y); // 0~5000, 0~500
-			player2 = new Player(x2, y2); // 0~5000, 4500~5000
-		}
-		
-		loadMap("map1.dat");
-		
+	private void sendInfo(Socket socket) {
 		try {
-			reciver = new Reciver(new DataInputStream(socket.getInputStream()));
-			sender = new Sender(new DataOutputStream(socket.getOutputStream()));
-			playing = true;
-			reciver.start();
-			sender.start();
-		} catch(Exception e) {
-			System.out.println("Data stream error");
+			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+			out.writeUTF(player1.getX() + "," + player1.getY() + "," + player2.getX() + "," +player2.getY());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void reciveInfo(Socket socket) {
+		try {
+			DataInputStream in = new DataInputStream(socket.getInputStream());
+			String[] recived = in.readUTF().split(",");
+			player1 = new Player(toInt(recived[2]), toInt(recived[3]));
+			player2 = new Player(toInt(recived[0]), toInt(recived[1]));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
 	private int toInt(final String str) {
-		return Integer.parseInt(str);
+		return Integer.parseInt(str);	
 	}
 	
 	private void draw() {
@@ -252,27 +287,33 @@ public class Game {
 		gc.strokeOval(showPosX-10, showPosY-10, 20, 20);
 	}
 	
+	private String getPlayers() {
+		return player1.getX()+","+player1.getY();
+	}
+	
 	private class Reciver extends Thread {
-		private DataInputStream in = null;
+		private DatagramSocket socket;
+		private DatagramPacket packet;
 		
-		public Reciver(DataInputStream in) {
-			super();
+		public Reciver(final int port) {
 			this.setDaemon(true);
-			this.in = in;
+			try {
+				socket = new DatagramSocket(port);
+			} catch (SocketException e) {
+				e.printStackTrace();
+			}
 		}
 
 		@Override
 		public void run() {
+			byte[] buf = new byte[64];
 			while(playing) {
 				try {
-					String recived = in.readUTF();
-					String[] data = recived.split(",");
-					if(player1 == null || player2 == null) {
-						player1 = new Player(toInt(data[2]), toInt(data[3]));
-						player2 = new Player(toInt(data[0]), toInt(data[1]));
-					}
-					player1.setPos(toInt(data[2]), toInt(data[3]));
-					player2.setPos(toInt(data[0]), toInt(data[1]));
+					packet = new DatagramPacket(buf, buf.length);
+					socket.receive(packet);
+					
+					String[] msg = new String(packet.getData()).split(",");
+					player2.setPos(toInt(msg[0].trim()), toInt(msg[1].trim()));
 				} catch(Exception e) {
 					e.printStackTrace();
 				} 
@@ -281,31 +322,34 @@ public class Game {
 	}
 	
 	private class Sender extends Thread {
-		private DataOutputStream out = null;
+		private InetAddress address;
+		private DatagramSocket socket;
+		private int port;
 		
-		public Sender(DataOutputStream out) {
-			super();
+		public Sender(InetAddress address, final int port) {
+			this.address = address;
+			this.port = port;
 			this.setDaemon(true);
-			this.out = out;
+			
+			try {
+				socket = new DatagramSocket();
+			} catch (SocketException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		@Override
 		public void run() {
+			byte[] buf = new byte[64];
 			while(playing) {
 				try {
-					out.writeUTF(getPlayers());
+					buf = getPlayers().getBytes();
+					socket.send(new DatagramPacket(buf, buf.length, address, port));
+					Thread.sleep(10);
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
 			}
-		}
-		
-		private String getPlayers() {
-			int x = player1.getX();
-			int y = player1.getY();
-			int x2 = player2.getX();
-			int y2 = player2.getY();
-			return x+","+y+","+x2+","+y2;
 		}
 	}
 }

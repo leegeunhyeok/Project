@@ -58,7 +58,7 @@ public class JoinController {
 				Platform.runLater(new Runnable() {
 	                @Override 
 	                public void run() {
-	                	Game game = new Game(socket, false);
+	                	Game game = new Game(socket, host, port);
 	                }
 	            });
 			}

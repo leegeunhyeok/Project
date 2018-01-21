@@ -56,7 +56,7 @@ public class CreateController {
 				Platform.runLater(new Runnable() {
 	                @Override 
 	                public void run() {
-	                	Game game = new Game(socket, true);
+	                	Game game = new Game(socket, port);
 	                }
 	            });	
 			}
