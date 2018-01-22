@@ -229,7 +229,9 @@ public class Game {
 	}
 	
 	private int toInt(final String str) {
-		return Integer.parseInt(str);	
+		int temp = Integer.parseInt(str);
+		//System.out.println(temp + "/" + str);
+		return temp;
 	}
 	
 	private void draw() {
@@ -275,8 +277,10 @@ public class Game {
 		
 		gc.setFill(Color.CRIMSON);
 		gc.setStroke(Color.BROWN);
-		gc.fillOval((x2+400-playerSize/2)-x, (y2+280+playerSize/2)-y, playerSize, playerSize);
-		gc.strokeOval((x2+400-playerSize/2)-x, (y2+280+playerSize/2)-y, playerSize, playerSize);
+		double _x2 = (x2-x+400)-playerSize/2;
+		double _y2 = (y2-y+300)-playerSize/2;
+		gc.fillOval(_x2, _y2, playerSize, playerSize);
+		gc.strokeOval(_x2, _y2, playerSize, playerSize);
 		
 		
 		// Line (Aim, ½Ã¾ß)
@@ -306,12 +310,12 @@ public class Game {
 
 		@Override
 		public void run() {
-			byte[] buf = new byte[64];
+			byte[] buf;
 			while(playing) {
+				buf = new byte[64];
 				try {
 					packet = new DatagramPacket(buf, buf.length);
 					socket.receive(packet);
-					
 					String[] msg = new String(packet.getData()).split(",");
 					player2.setPos(toInt(msg[0].trim()), toInt(msg[1].trim()));
 				} catch(Exception e) {
@@ -345,7 +349,7 @@ public class Game {
 				try {
 					buf = getPlayers().getBytes();
 					socket.send(new DatagramPacket(buf, buf.length, address, port));
-					Thread.sleep(10);
+					Thread.sleep(15);
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
