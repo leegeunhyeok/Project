@@ -79,6 +79,7 @@ public class MainController implements Initializable {
 					series.getData().add(new XYChart.Data(i++ + "", num));
 					num += ((num+1)*0.01);
 					multipleText.setText(df.format(num) + "x");	
+					System.out.println(num);
 					if(num > computedMultiple) break; // 지정된 배율까지 가면 종료
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -87,11 +88,11 @@ public class MainController implements Initializable {
 			
 			// 만약 유저 배율이 더 작을경우 배당금 지급 (적중)
 			if(Double.parseDouble(df.format(num)) >= betMultiple) {
-				System.out.println("Win: " + coin);
+				System.out.println("Win!: +" + coin);
 				ownCoin += coin;
 				win++;
 			} else { // 유저 배율이 더 크면 실패 (배팅한 코인 사라짐)
-				System.out.println("Lose: -" + betCoin);
+				System.out.println("Lose!: -" + betCoin);
 				ownCoin -= betCoin;
 				lose++;
 			}
@@ -111,10 +112,12 @@ public class MainController implements Initializable {
 		startBtn.setDisable(disable);
 	}
 	
-	// 입력창 데이터 지우기 
+	// 게임 초기상태로 설정 
 	private void clearControl() {
+		startBtn.setDisable(true);
 		multipleInput.setText(null);
 		betInput.setText(null);
+		payText.setText("0");
 	}
 	
 	// 랜덤 배율 가져오기 
@@ -139,6 +142,7 @@ public class MainController implements Initializable {
 				this.coin = (int)Math.round(multiple * coin);
 				payText.setText(this.coin + "");
 				startBtn.setDisable(false);
+				System.out.println("예상 수익: " + this.coin + " (" + multiple + " * " + coin + ")");
 			} else {
 				payText.setText("코인 초과");
 			}
@@ -149,6 +153,7 @@ public class MainController implements Initializable {
 	
 	// 파일 불러오기 
 	private void readFile() {
+		System.out.print("파일 불러오는 중.. ");
 		try {
 			BufferedReader in = new BufferedReader(new FileReader("user.dat"));
 			ownCoin = Integer.parseInt(in.readLine());
@@ -165,10 +170,12 @@ public class MainController implements Initializable {
 				winRate.setText("0 %");
 			}
 			in.close();
+			System.out.println("성공");
 		} catch(FileNotFoundException e) {
 			System.out.println("파일이 없습니다");
 			createNewFile();
 		} catch(IOException e) {
+			System.out.println("실패");
 			ownCoin = 1000;
 			win = 0;
 			lose = 0;
@@ -177,6 +184,7 @@ public class MainController implements Initializable {
 	
 	// 파일 저장하기 
 	private void saveFile() {
+		System.out.print("파일 저장하는 중.. ");
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter("user.dat"));
 			out.write("" + ownCoin);
@@ -185,15 +193,18 @@ public class MainController implements Initializable {
 			out.newLine();
 			out.write("" + lose);
 			out.close();
+			System.out.println("성공");
 		} catch(FileNotFoundException e) {
+			System.out.println("파일이 없습니다");
 			createNewFile();
 		} catch(IOException e) {
-			
+			System.out.println("실패");
 		}
 	}
 	
 	// 새 파일 생성 
 	private void createNewFile() {
+		System.out.print("새 파일 생성하는 중.. ");
 		ownCoin = 1000;
 		ownCoinText.setText("1000");
 		ownCoinTextInfo.setText("1000");
@@ -205,8 +216,9 @@ public class MainController implements Initializable {
 			newfile.newLine();
 			newfile.write("0");
 			newfile.close();
+			System.out.println("성공");
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			System.out.println("실패");
 		}
 	}
 }

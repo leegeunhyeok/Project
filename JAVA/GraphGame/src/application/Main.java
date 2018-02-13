@@ -13,7 +13,8 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			Parent root = FXMLLoader.load(this.getClass().getResource("./Main.fxml"));
+			System.out.println("·Îµù Áß..");
+			Parent root = FXMLLoader.load(this.getClass().getResource("Main.fxml"));
 			Scene scene = new Scene(root);
 			primaryStage.setResizable(false);
 			primaryStage.setTitle("Graph Game " + VERSION);
