@@ -1,0 +1,42 @@
+.wrap {
+    width: 500px;
+    padding: 30px;
+    margin: auto;
+    margin-top: 100px;
+    background-color: #eee;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.button {
+    cursor: pointer;
+    outline: none;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    background-color: #fff;
+    padding: 5px 10px;
+}
+
+.button:hover {
+    background-color: #efefef;
+}
+
+.main-button {
+    border: 1px solid dodgerblue;
+    color: dodgerblue;
+}
+
+.title {
+    margin-bottom: 100px;
+}
+
+.input {
+    margin: 5px 0px;
+}
+
+.input input {
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid lightgray;
+    padding: 5px 10px;
+}
