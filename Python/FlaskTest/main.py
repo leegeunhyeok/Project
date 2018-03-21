@@ -8,10 +8,12 @@ app = Flask(__name__)
 conn = pymysql.connect(host="localhost", user="root", password="1234", db="python", charset="utf8")
 cur = conn.cursor()
 
+# main
 @app.route("/")
 def main():
     return render_template("index.html")
 
+# logout (delete session)
 @app.route("/logout")
 def logout():
     try:
@@ -20,10 +22,12 @@ def logout():
     except:
         return '<script>location.href = "/"</script>'
 
+# login page
 @app.route("/login")
 def login():
     return render_template("login.html")
 
+# login check
 @app.route("/process/loginCheck", methods=["POST"])
 def process_login_check():
     try:
@@ -32,6 +36,49 @@ def process_login_check():
     except:
         return json.dumps({"result": False})
 
+
+@app.route("/process/getLoginLog", methods=["POST"])
+def get_login_log():
+    now = datetime.datetime.now()
+    today = "%s-%s-%s 00:00:00" % (now.year, now.month, now.day)
+    start_day = now - datetime.timedelta(days=30)
+    day = [0] * 24 # 24
+    month = [0] * 30 # 30
+
+    # Today log
+    cur.execute("SELECT * FROM login WHERE time >= %s AND time <= %s", (today, now.strftime("%Y-%m-%d %H:%M:%S")))
+    rows = cur.fetchall()
+    for time in range(24):
+        for row in rows:
+            if (time == int(row[1].hour)):
+                day[time] += 1
+
+    # 30 days log
+    cur.execute("SELECT * FROM login WHERE time >= %s AND time <= %s", (start_day, now.strftime("%Y-%m-%d %H:%M:%S")))
+    rows = cur.fetchall()
+    for time in range(30):
+        for row in rows:
+            if (time == int(row[1].day)):
+                month[time] += 1
+
+    print "Day:", day
+    print "Month:", month
+
+    return json.dumps({'day': ["User"] + day, 'month': ["User"] + month})
+
+@app.route("/process/getUser", methods=["POST"])
+def get_user():
+    users = []
+
+    cur.execute("SELECT * FROM flask_user")
+    rows = cur.fetchall()
+
+    for row in rows:
+        users.append([row[0], row[1], row[2] == 0 and "Default" or "Admin"])
+
+    return json.dumps({"data": users})
+
+# all post get
 @app.route("/process/getContent", methods=["POST"])
 def get_content():
     cur.execute("SELECT * FROM content")
@@ -42,6 +89,7 @@ def get_content():
 
     return json.dumps({"data": data})
 
+# cid post get
 @app.route("/process/getPost", methods=["POST"])
 def get_post():
     _cid = request.form["cid"]
@@ -49,6 +97,7 @@ def get_post():
     data = cur.fetchall()[0]
     return json.dumps({"title":data[0], "content":data[1], "date":data[2]})
 
+# cid post delete
 @app.route("/process/deletePost", methods=["POST"])
 def delete_post():
     _cid = request.form["cid"]
@@ -67,6 +116,7 @@ def delete_post():
     except:
         return json.dumps({"result": False, "message":"Access denied."})
 
+# login
 @app.route("/process/login", methods=["POST"])
 def process_login():
     # user id
@@ -81,14 +131,20 @@ def process_login():
     if result > 0:
         user = cur.fetchall()[0] # first user data
         session['user'] = {"_id": user[0], "permission":user[2]} # Add user data at session
+
+        # add login log
+        cur.execute("INSERT INTO login VALUES(%s, %s)", (user[0], datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        conn.commit()
         return '<script>alert("Hello, %s");location.href = "/"</script>' % _id
     else:
         return '<script>alert("Access denied.");location.href = "/"</script>'
 
+# signup page
 @app.route("/signup")
 def signup():
     return render_template("signup.html")
 
+# signup
 @app.route("/process/signup", methods=["POST"])
 def process_signup():
     _id = request.form['id']
@@ -134,7 +190,7 @@ def write():
         _id = session['user']['_id']
         _title = request.form['title']
         _content = request.form['content']
-        _date = n.strftime("%Y-%m-%d")
+        _date = n.strftime("%Y-%m-%d %H:%M:%S")
         cur.execute("INSERT INTO content VALUES(%s, %s, %s, %s, %s)", (_cid, _title, _content, _date, _id))
         conn.commit()
         return "<script>alert('Done!');location.href = '/'</script>"
@@ -163,6 +219,7 @@ def modify():
     except:
         return "<script>alert('Please login');location.href = '/login'</script>"
 
+# user info page
 @app.route("/user")
 def user():
     try:
@@ -174,6 +231,7 @@ def user():
     except:
         return "<script>alert('Please login'); location.href='/'</script>"
 
+# connect info page
 @app.route("/connect")
 def connect():
     return render_template("connect.html")
@@ -193,11 +251,9 @@ def check(str):
     else:
         return False
 
-
-
 if __name__ == "__main__":
     print "Starting at %s" % __name__
-    app.secret_key = "key_value_0509"
+    app.secret_key = "key_value_0509" # session key
     app.run(threaded = True)
 else:
     print "Not main : %s" % __name__

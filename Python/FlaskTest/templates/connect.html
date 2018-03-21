@@ -4,6 +4,7 @@
         <meta charset=utf-8">
         <title>파이썬 플라스크 접속현황</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link href="../static/c3.min.css" rel="stylesheet">
         <link rel="stylesheet" href="../static/flask.css">
     </head>
     <body>
@@ -12,7 +13,8 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">오늘 접속현황</div>
                     <div class="panel-body">
-                        데이터
+                        <div id="day-data">
+                        </div>
                         <button class="btn btn-default" onclick="location.href = '/'">메인으로</button>
                     </div>
                 </div>
@@ -21,7 +23,8 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">최근 30일 접속현황</div>
                     <div class="panel-body">
-                        데이터
+                        <div id="month-data">
+                        </div>
                         <button class="btn btn-default" onclick="location.href = '/'">메인으로</button>
                     </div>
                 </div>
@@ -29,5 +32,8 @@
         </div>
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://d3js.org/d3.v3.min.js"></script>
+        <script src="../static/js/c3.min.js"></script>
+        <script src="../static/js/connect.js"></script>
     </body>
 </html>
