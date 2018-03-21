@@ -1,42 +1,20 @@
-.wrap {
-    width: 500px;
-    padding: 30px;
-    margin: auto;
-    margin-top: 100px;
-    background-color: #eee;
-    border-radius: 10px;
-    text-align: center;
+.top-margin {
+    margin-top: 50px;
 }
 
-.button {
-    cursor: pointer;
-    outline: none;
-    border: 1px solid lightgray;
-    border-radius: 5px;
-    background-color: #fff;
-    padding: 5px 10px;
+.col-center {
+    float: none;
+    margin: 0 auto;
 }
 
-.button:hover {
-    background-color: #efefef;
+.left {
+    float: left;
 }
 
-.main-button {
-    border: 1px solid dodgerblue;
-    color: dodgerblue;
+nav {
+    margin: 0;
 }
 
-.title {
-    margin-bottom: 100px;
-}
-
-.input {
-    margin: 5px 0px;
-}
-
-.input input {
-    outline: none;
-    border-radius: 5px;
-    border: 1px solid lightgray;
-    padding: 5px 10px;
+#content-id {
+    float: left;
 }
