@@ -86,7 +86,7 @@ $(function() {
             error: function(err) {
                 console.log(err.statusText);
             }
-        })
+        });
     });
 
     $('#edit-btn').click(function() {
@@ -107,5 +107,5 @@ $(function() {
         } else {
             alert('Access denied.');
         }
-    })
+    });
 });

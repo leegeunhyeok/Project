@@ -1,4 +1,5 @@
 $(function() {
+    var _id = '';
     var table = $('#user-list').DataTable({
         "language": {
             "lengthMenu": "_MENU_ 개씩 보기",
@@ -15,6 +16,30 @@ $(function() {
             "url": "/process/getUser",
             "type": "POST"
          }
+    });
+
+    $('#user-list tbody').on('click', 'tr', function() {
+        _id = table.row(this).data()[0];
+        $('#popup').modal();
+    });
+
+    $('#delete-btn').click(function() {
+        $.ajax({
+            url: '/process/deleteUser',
+            type: 'POST',
+            dataType: 'JSON',
+            data: {'id': _id},
+            success: function(data) {
+                if(data.result) {
+                    alert(_id + ' 유저 삭제완료');
+                } else {
+                    alert('삭제 실패');
+                }
+                location.href = '/user';
+            }, error: function(err) {
+                console.log(err.statusText);
+            }
+        });
     });
 });
 

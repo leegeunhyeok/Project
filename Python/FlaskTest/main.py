@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, json, request, session
+from flask import Flask, render_template, json, request, session
 import pymysql
 import datetime
 
@@ -40,7 +40,9 @@ def process_login_check():
 @app.route("/process/getLoginLog", methods=["POST"])
 def get_login_log():
     now = datetime.datetime.now()
+
     today = "%s-%s-%s 00:00:00" % (now.year, now.month, now.day)
+    # 2018-03-04 00:00:00
     start_day = now - datetime.timedelta(days=30)
     day = [0] * 24 # 24
     month = [0] * 30 # 30
@@ -48,7 +50,7 @@ def get_login_log():
     # Today log
     cur.execute("SELECT * FROM login WHERE time >= %s AND time <= %s", (today, now.strftime("%Y-%m-%d %H:%M:%S")))
     rows = cur.fetchall()
-    for time in range(24):
+    for time in range(24): # 00:00 ~ 23:00
         for row in rows:
             if (time == int(row[1].hour)):
                 day[time] += 1
@@ -115,6 +117,13 @@ def delete_post():
             return json.dumps({"result": False, "message":"Admin or %s can delete" % _id})
     except:
         return json.dumps({"result": False, "message":"Access denied."})
+
+@app.route("/process/deleteUser", methods=["POST"])
+def delete_user():
+    _id = request.form["id"]
+
+    result = cur.execute("DELETE FROM flask_user WHERE _id = %s", (_id))
+    return json.dumps({"result":result and True or False})
 
 # login
 @app.route("/process/login", methods=["POST"])
