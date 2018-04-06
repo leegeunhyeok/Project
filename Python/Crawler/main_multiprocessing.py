@@ -1,11 +1,13 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from bs4 import BeautifulSoup
 from PIL import Image
 import urllib.request
 import pymysql
 import os
 import re
-import time # 시간
+import time  # 시간
+import multiprocessing
+# import
 
 conn = pymysql.connect(host="localhost", user="root", password="1234", db="python", charset="utf8")
 cur = conn.cursor()
@@ -13,9 +15,6 @@ cur = conn.cursor()
 # 크롤링
 # 최대 페이지, 현재 페이지(시작)
 def crawler(thumbnail=False):
-    # 공유마당 기본 URL
-    base_url = "https://gongu.copyright.or.kr"
-
     # 공유마당 게시글 목록 URL
     base_list_url = "https://gongu.copyright.or.kr/gongu/wrt/wrtCl/listWrt.do?menuNo=200023&wrtTy=4&depth2At=Y&pageIndex="
     count = 0  # 조회된 아이템 수(저작물 항목)
@@ -25,31 +24,34 @@ def crawler(thumbnail=False):
     page = 1
     max_page = get_max_page(base_list_url)
     max_page = 5
-
-    start_time = time.time() # 시간 측정(시작)
+    start_time = time.time()  # 시간 측정(시작)
 
     while max_page >= page:
         url = base_list_url + str(page)
-        print("----------[ %d 페이지 ]-----------" % page)
-        print("페이지 링크:", url)
-        html = urllib.request.urlopen(url)
-        source = html.read()
-
-        soup = BeautifulSoup(source, "html.parser")
-
-        list = soup.find(id="wrtList") # 아이템(저작물) 목록
-        items = list.find_all("li") # 아이템(저작물)
-
-        for item in items:
-            count += 1 # 전체 아이템 수 증가
-            success += get_item_data(base_url, item.find("a").get("href"), thumbnail)
-
-        print("진행률: %f%%(%d/%d)" % (page/max_page*100, page, max_page))
+        #print("----------[ %d 페이지 ]-----------" % page)
+        #print("페이지 링크:", url)
+        pool = multiprocessing.Pool(processes=4)
+        pool.map(get_item_data, get_content(url))
+        print("진행률: %f%%(%d/%d)" % (page / max_page * 100, page, max_page))
         page += 1
     else:
         print("[ 전체 저작물 수: %d ]" % count)
         print("[ 다운로드 받은 저작물: %d/%d ]" % (success, count))
         print("[ %s 초 ]" % (round(time.time() - start_time, 3)))
+
+def get_content(url):
+    html = urllib.request.urlopen(url)
+    source = html.read()
+
+    soup = BeautifulSoup(source, "html.parser")
+
+    list = soup.find(id="wrtList")  # 아이템(저작물) 목록
+    items = list.find_all("li")  # 아이템(저작물)
+    url_list = []
+    for item in items:
+        url_list.append(item.find("a").get("href"))
+    return url_list
+
 
 # 공유마당의 마지막 페이지 추출
 def get_max_page(url):
@@ -65,8 +67,9 @@ def get_max_page(url):
 
 # 저작물의 이미지, 라이선스, 상세정보 파싱
 # 공유마당 기본 URL, 상세정보 URL
-def get_item_data(base_url, href, thumbnail):
-    error = True # 오류 여부
+def get_item_data(href):
+    error = True  # 오류 여부
+    base_url = "https://gongu.copyright.or.kr"
     url = base_url + href
     print("링크:", url)
 
@@ -78,51 +81,49 @@ def get_item_data(base_url, href, thumbnail):
     # 에러 핸들링, (SQL, HTML 속성, 기타 오류)
     try:
         _id = getCode(url)
-        img_src = soup.find(class_="imgD").find("img").get("src") # 저작물 이미지 src
-        img_name = soup.find(class_="tit_txt3").text # 이미지 명
-        copy = soup.find(class_="copyD")
-        copy_src = copy.find("img").get("src") # 라이선스 이미지 src
-        copy_text = copy.text.replace("\n","").replace("\r","").replace("\t","").strip()
-        copy_name = copy_src.split("/")[-1] # 라이선스 이미지 명
+        img_src = soup.find(class_="imgD").find("img").get("src")  # 저작물 이미지 src
+        img_name = soup.find(class_="tit_txt3").text  # 이미지 명
+        copy_src = soup.find(class_="copyD").find("img").get("src")  # 라이선스 이미지 src
+        copy_name = copy_src.split("/")[-1]  # 라이선스 이미지 명
 
         # 라이선스 파일이 없을 때 다운로드 및 저장
-        if(not duplicateCheck(copy_name, 1)):
+        if (not duplicateCheck(copy_name, 1)):
             urllib.request.urlretrieve(base_url + copy_src, "./license/" + copy_name)
-            #print("새 라이선스 이미지 다운로드:", copy_name)
+            # print("새 라이선스 이미지 다운로드:", copy_name)
 
         # 상세정보 파싱
         table = soup.find(class_="tb_bbs").find_all("tr")
 
         # DB 속성 (a, b, c, ...)
-        attr = "(_id,filename,path,license,license_name,"
+        attr = "(_id,filename,path,license,"
 
         # DB 값 (v1, v2, v3, ...)
-        attrValue = "(\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"," % (_id, img_name, "./img/" + _id + ".png", copy_name, copy_text)
+        attrValue = "(\"%s\",\"%s\",\"%s\",\"%s\"," % (_id, img_name, "./img/" + _id + ".png", copy_name)
 
         # 컬럼 수
         cols = 0
         for info in table:
-            title = info.find("th").text.replace("\\s", "") # 상세정보 제목
+            title = info.find("th").text.replace("\\s", "")  # 상세정보 제목
             try:
                 attr += attrQuery(title) + ","  # DB 컬럼명 추가
                 value = ""
                 if (title == u"저작자"):
-                    authors = info.find("td").find_all("a") # 저작자가 여러명인 경우
+                    authors = info.find("td").find_all("a")  # 저작자가 여러명인 경우
                     for author in authors:
-                        value += author.text + "," # 저작자가 여러명인 경우 , 문자로 구분
+                        value += author.text + ","  # 저작자가 여러명인 경우 , 문자로 구분
                 else:
                     value = info.find("td").text
 
-                value = value.strip() # 양쪽 불필요한 공백 제거
+                value = value.strip()  # 양쪽 불필요한 공백 제거
 
                 # DB 저장할 값 추가
-                attrValue += "\"%s\"," % value.replace("\n","").replace("\r","").replace("\t","").replace("\"","")
+                attrValue += "\"%s\"," % value.replace("\n", "").replace("\r", "").replace("\t", "").replace("\"", "")
                 cols += 1
             except RuntimeError as e:
                 print("Runtime Error:", e)
-                save_log(_id, str(e)) # 로그에 저장
-            
-        file_name = _id + ".png" # 저장 파일명
+                save_log(_id, str(e))  # 로그에 저장
+
+        file_name = _id + ".png"  # 저장 파일명
 
         # 파일이 존재하지 않는 경우에만 다운로드
         if not duplicateCheck(file_name):
@@ -131,7 +132,7 @@ def get_item_data(base_url, href, thumbnail):
         else:
             print("이미 존재하는 이미지:", file_name)
 
-        if thumbnail:
+        if True:
             # 썸네일 이미지가 없는 경우에만 생성
             if not duplicateCheck(file_name, 2):
                 gen_thumbnail(file_name)
@@ -146,19 +147,20 @@ def get_item_data(base_url, href, thumbnail):
         query = "INSERT INTO crawler %s VALUES %s" % (attr, attrValue)
         cur.execute(query)
         conn.commit()
-    except AttributeError as e: # 속성 오류
+    except AttributeError as e:  # 속성 오류
         print("Attribute Error:", e)
-    except pymysql.err.IntegrityError as e: # 중복, SQL 오류
+    except pymysql.err.IntegrityError as e:  # 중복, SQL 오류
         print("SQL Error:", e)
     except Exception as e:
         print("Error:", e)
-        save_log(_id, str(e)) # 기타 예외사항은 로그에 기록
+        save_log(_id, str(e))  # 기타 예외사항은 로그에 기록
 
     print("")
-    if error: # 에러가 있으면 다운로드 된 이미지 +0
+    if error:  # 에러가 있으면 다운로드 된 이미지 +0
         return 0
-    else: # 에러가 없으면 다운로드 된 이미지 +1
+    else:  # 에러가 없으면 다운로드 된 이미지 +1
         return 1
+
 
 # 게시글 URL에서 wrtSn의 값만 추출
 def getCode(url):
@@ -168,6 +170,7 @@ def getCode(url):
     except Exception as e:
         print("게시글 번호 추출 오류:", e)
         return "error"
+
 
 # 중복체크, 파일 존재 유무 (0: 이미지, 1: 라이선스 이미지, 2: 썸네일 이미지)
 def duplicateCheck(name, type=0):
@@ -180,6 +183,7 @@ def duplicateCheck(name, type=0):
     else:
         path = "./img/"
     return os.path.exists(path + name)
+
 
 # 항목 타이틀로 DB 컬럼 찾기
 def attrQuery(title):
@@ -237,6 +241,7 @@ def attrQuery(title):
     else:
         raise RuntimeError("알 수 없는 상세정보")
 
+
 # 썸네일 생성
 def gen_thumbnail(src):
     img = Image.open("./img/" + src)
@@ -245,11 +250,13 @@ def gen_thumbnail(src):
     img.thumbnail((200, 200))
     img.save("./thumbnail/" + src)
 
+
 # 로그 저장
 def save_log(msg, err=""):
     f = open("./log/crawler.log", "a", encoding="utf-8")
     f.write(msg + " : " + err + "\n")
     f.close()
+
 
 if __name__ == "__main__":
     # 썸네일 생성 여부
