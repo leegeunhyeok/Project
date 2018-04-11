@@ -23,7 +23,7 @@ def crawler(thumbnail=False):
 
     # 시작 페이지는 항상 1부터
     page = 1
-    max_page = get_max_page(base_list_url)
+    max_page = 30
     max_page = 5
 
     start_time = time.time() # 시간 측정(시작)
