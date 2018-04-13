@@ -43,7 +43,6 @@ def get_max_page(url):
 def get_item_data(href, thumbnail=False):
     base_url = "https://gongu.copyright.or.kr"
     url = base_url + href
-    print("링크:", url)
 
     html = urllib.request.urlopen(url)
     source = html.read()
@@ -127,8 +126,7 @@ def get_item_data(href, thumbnail=False):
     except Exception as e:
         print("Error:", e)
         save_log(_id, str(e))  # 기타 예외사항은 로그에 기록
-
-    print(_id, "--- end")
+    print(_id)
 
 # 게시글 URL에서 wrtSn의 값만 추출
 def getCode(url):
@@ -231,7 +229,9 @@ if __name__ == "__main__":
     page = 1
     base_list_url = "https://gongu.copyright.or.kr/gongu/wrt/wrtCl/listWrt.do?menuNo=200023&wrtTy=4&depth2At=Y&pageIndex="
     process = []
-    for i in range(get_max_page(base_list_url + "1")): # 1 ~ 최대 페이지까지
+    max_page = get_max_page(base_list_url + "1")
+    max_page = 25
+    for i in range(max_page): # 1 ~ 최대 페이지까지
         page_start = time.time()
         print("----------[ %d 페이지 ]----------" % (i+1))
         for link in get_links(base_list_url + str(i+1)): # 추출된 링크 수 만큼 프로세스 생성
@@ -241,7 +241,7 @@ if __name__ == "__main__":
 
         for p in process:
             p.join() # 프로세스 종료 대기
-        print("[ %d 페이지 크롤링 소요시간: %s 초 ]" % (i+1, round(time.time() - page_start, 3)))
+        print("[ %d 페이지 크롤링 소요시간: %s 초 ] -- %s%% (%d/%d)" % (i+1, round(time.time() - page_start, 3), round((i+1)/max_page*100, 3), i+1, max_page))
     else:
         print("[ 전체 크롤링 소요시간: %s 초 ]" % (round(time.time() - start_time, 3)))
 
