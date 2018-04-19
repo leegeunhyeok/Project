@@ -9,22 +9,24 @@ import time  # 시간
 import multiprocessing
 # import
 
-conn = pymysql.connect(host="localhost", user="root", password="1234", db="python", charset="utf8")
+conn = pymysql.connect(host="localhost", user="root", password="1234", db="python", charset="utf8", connect_timeout=5, write_timeout=5, read_timeout=5)
 cur = conn.cursor()
 
 # 저작물 링크 추출
 def get_links(url):
-    html = urllib.request.urlopen(url)
-    source = html.read()
-
-    soup = BeautifulSoup(source, "html.parser")
-
-    list = soup.find(id="wrtList")  # 아이템(저작물) 목록
-    items = list.find_all("li")  # 아이템(저작물)
-    url_list = []
-    for item in items:
-        url_list.append(item.find("a").get("href"))
-    return url_list
+    try:
+        html = urllib.request.urlopen(url)
+        source = html.read()
+        soup = BeautifulSoup(source, "html.parser")
+        list = soup.find(id="wrtList")  # 아이템(저작물) 목록
+        items = list.find_all("li")  # 아이템(저작물)
+        url_list = []
+        for item in items:
+            url_list.append(item.find("a").get("href"))
+        return url_list
+    except Exception as e:
+        save_log(url, str(e))
+        return []
 
 # 공유마당의 마지막 페이지 추출
 def get_max_page(url):
@@ -40,22 +42,25 @@ def get_max_page(url):
 
 # 저작물의 이미지, 라이선스, 상세정보 파싱
 # 공유마당 기본 URL, 상세정보 URL
-def get_item_data(ft, thumbnail=False):
+def get_item_data(ft):
     base_list_url = "https://gongu.copyright.or.kr/gongu/wrt/wrtCl/listWrt.do?menuNo=200023&wrtTy=4&depth2At=Y&pageIndex="
     base_url = "https://gongu.copyright.or.kr"
     page = ft[0]
     max = page + ft[1]
+    count = 0
+    max_count = ft[1]
+
+    process_name = multiprocessing.current_process().name
+    process_id = str(os.getpid())
+    err = ""
     while page < max:
         for href in get_links(base_list_url + str(page)):
-            url = base_url + href
-
-            html = urllib.request.urlopen(url)
-            source = html.read()
-
-            soup = BeautifulSoup(source, "html.parser")
-
             # 에러 핸들링, (SQL, HTML 속성, 기타 오류)
             try:
+                url = base_url + href
+                source = urllib.request.urlopen(url, timeout=5).read()
+                soup = BeautifulSoup(source, "html.parser")
+
                 _id = getCode(url)
                 img_src = soup.find(class_="imgD").find("img").get("src")  # 저작물 이미지 src
                 img_name = soup.find(class_="tit_txt3").text  # 이미지 명
@@ -109,12 +114,11 @@ def get_item_data(ft, thumbnail=False):
                 else:
                     print("이미 존재하는 이미지:", file_name)
 
-                if thumbnail:
-                    # 썸네일 이미지가 없는 경우에만 생성
-                    if not duplicateCheck(file_name, 2):
-                        gen_thumbnail(file_name)
-                    else:
-                        print("이미 존재하는 썸네일 이미지:", file_name)
+                # 썸네일 이미지가 없는 경우에만 생성
+                if not duplicateCheck(file_name, 2):
+                    gen_thumbnail(file_name)
+                else:
+                    print("이미 존재하는 썸네일 이미지:", file_name)
 
                 # 맨 뒤에 컬럼 수 데이터 추가
                 attr += "col_size)"
@@ -124,20 +128,24 @@ def get_item_data(ft, thumbnail=False):
                 query = "INSERT INTO crawler %s VALUES %s" % (attr, attrValue)
                 cur.execute(query)
                 conn.commit()
+                err = ""
             except AttributeError as e:  # 속성 오류
-                print("Attribute Error:", e)
+                err = str(e)
             except pymysql.err.IntegrityError as e:  # 중복, SQL 오류
-                print("SQL Error:", e)
+                err = str(e)
             except Exception as e:
-                print("Error:", e)
+                err = str(e)
                 save_log(_id, str(e))  # 기타 예외사항은 로그에 기록
-            print("게시물 ID:", _id)
+            per = round(count/max_count*100, 3)
+            print("{}: [{:<20}] {}% ({}/{}) {} {}".format(process_name, "=" * int(per/5), per, count, max_count, _id, err))
         page += 1
+        count += 1
+    print("{}: [{:<20}] {}% ({}/{})".format(process_name, "=" * 20, 100.0, max_count, max_count))
 
 # 게시글 URL에서 wrtSn의 값만 추출
 def getCode(url):
     try:
-        m = str(re.search(r"wrtSn=\d{4,12}", url).group())
+        m = str(re.search(r"wrtSn=\d{4,16}", url).group())
         return re.sub("[^0-9]", "", m)
     except Exception as e:
         print("게시글 번호 추출 오류:", e)
@@ -241,19 +249,23 @@ def get_count(max, p):
     print(list)
     return list
 
-if __name__ == "__main__":
-    start_time = time.time()  # 시간 측정(시작)
+def start():
     process = []
-    #max_page = get_max_page(base_list_url + "1") # 전체 페이지 수
-    max_page = 25
-    process_count = 8 # 프로세스 수
-    page_start = time.time()
-    for i, c in enumerate(get_count(max_page, process_count)):
-        p = multiprocessing.Process(target=get_item_data, args=(c, True))
-        process.append(p)
+    # max_page = get_max_page(base_list_url + "1") # 전체 페이지 수
+    max_page = 2000
+    process_count = 8  # 프로세스 수
+    start_time = time.time()  # 시간 측정(시작)
+    for c in get_count(max_page, process_count):
+        p = multiprocessing.Process(target=get_item_data, args=(c,))
+        p.daemon = True
         p.start()  # 프로세스 시작
+        process.append(p)
 
     for p in process:
         p.join()  # 프로세스 종료 대기
-
     print("[ 전체 크롤링 소요시간: %s 초 ]" % (round(time.time() - start_time, 3)))
+    cur.close()
+    conn.close()
+
+if __name__ == "__main__":
+    start()

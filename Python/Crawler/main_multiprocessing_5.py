@@ -7,12 +7,9 @@ import os
 import re
 import time  # 시간
 import multiprocessing
-# import
 
 conn = pymysql.connect(host="localhost", user="root", password="1234", db="python", charset="utf8")
 cur = conn.cursor()
-
-progress = 0
 
 # 저작물 링크 추출
 def get_links(url):
@@ -35,9 +32,9 @@ def get_max_page():
     soup = BeautifulSoup(source, "html.parser")
     last_btn = soup.find(class_="end")
     href = last_btn.find("a").get("href")
-    max = re.search("[0-9]{1,10}$", href).group()
-    print("게시글 마지막 페이지:", max)
-    return int(max)
+    max_page = re.search("[0-9]{1,10}$", href).group()
+    print("게시글 마지막 페이지:", max_page)
+    return int(max_page)
 
 
 # 저작물의 이미지, 라이선스, 상세정보 파싱
@@ -46,12 +43,14 @@ def get_item_data(ft):
     base_list_url = "https://gongu.copyright.or.kr/gongu/wrt/wrtCl/listWrt.do?menuNo=200023&wrtTy=4&depth2At=Y&pageIndex="
     base_url = "https://gongu.copyright.or.kr"
     page = ft[0]
-    max = page + ft[1]
+    max_page = page + ft[1]
+    max_count = ft[1]
+    count = 0
 
     process_name = multiprocessing.current_process().name
     process_id = str(os.getpid())
 
-    while page < max:
+    while page < max_page:
         for href in get_links(base_list_url + str(page)):
             try:
                 url = base_url + href
@@ -62,7 +61,8 @@ def get_item_data(ft):
                 soup = BeautifulSoup(source, "html.parser")
             except Exception as e:
                 print(e)
-                save_log(url, str(e))
+                save_log(process_name + "(%s)" % process_id, url + "/" + str(e))
+                continue
 
             # 에러 핸들링, (SQL, HTML 속성, 기타 오류)
             try:
@@ -109,7 +109,7 @@ def get_item_data(ft):
                         cols += 1
                     except RuntimeError as e:
                         print("Runtime Error:", e)
-                        save_log(_id, str(e))  # 로그에 저장
+                        save_log(process_name + "(%s)" % process_id, _id + " / " + str(e))  # 로그에 저장
 
                 file_name = _id + ".png"  # 저장 파일명
 
@@ -139,15 +139,19 @@ def get_item_data(ft):
                 print("SQL Error:", e)
             except Exception as e:
                 print("Error:", e)
-                save_log(_id, str(e))  # 기타 예외사항은 로그에 기록
+                save_log(process_name + "(%s)" % process_id, _id + " / " + str(e))  # 기타 예외사항은 로그에 기록
 
-            print("%s (PID: %s)" % (process_name, process_id))
-            print("Target:", url)
-            print("게시물 ID: %s (PID: %d)" % (_id, os.getpid()))
-            print("=" * 90)
+#            print("%s (PID: %s)" % (process_name, process_id))
+#            print("Target:", url)
+#            print("게시물 ID: %s (PID: %d)" % (_id, os.getpid()))
+#            print("=" * 90)
         page += 1
-
+        count += 1
+        print("=" * 10, process_name, "(%s)" % process_id, "%s%% (총 %d페이지 중 %d 페이지 진행)" % (round(count/max_count*100, 3), max_count, count))
+    cur.close()
+    conn.close()
     print("=" * 90, "PID: %s end" % process_id)
+
 
 # 게시글 URL에서 wrtSn의 값만 추출
 def getCode(url):
@@ -245,25 +249,33 @@ def save_log(msg, err=""):
     f.close()
 
 # 크롤링할 페이지 수를 프로세스 수 만큼 분배
-def get_count(max, p):
-    i = int(max/p)
+def get_count(max_page, p):
+    i = int(max_page/p)
     start = 1
     list = []
     for n in range(p-1):
         list.append((start, i)) # 시작 페이지, 부터 몇 페이지 크롤링 할지
         start += i
-    list.append((start, i + max%p))
+    list.append((start, i + max_page%p))
     print(list)
     return list
 
 if __name__ == "__main__":
     process = []
-    max_page = get_max_page() # 전체 페이지 수
-    max_page = 128
+    max_page = 25 # 전체 페이지 수
     process_count = 8 # 프로세스 수
     start_time = time.time()
+    save_log("[START]", str(start_time))
+    # p = multiprocessing.Pool(processes=process_count)
+    # p.map(get_item_data, get_count(max_page, process_count))
 
-    p = multiprocessing.Pool(processes=process_count)
-    p.map(get_item_data, get_count(max_page, process_count))
+    for i in get_count(max_page, process_count):
+        p = multiprocessing.Process(target=get_item_data, args=(i,))
+        process.append(p)
+        p.daemon = True
+        p.start()
+
+    for p in process:
+        p.join()
     print("[ 1~%d 페이지 크롤링 소요시간: %s 초 ]" % (max_page, round(time.time() - start_time, 3)))
 

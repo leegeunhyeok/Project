@@ -51,14 +51,21 @@ def get_item_data(ft, max_page, num, thumbnail=False):
     process_name = multiprocessing.current_process().name
     process_id = str(os.getpid())
 
+    conn = pymysql.connect(host="localhost", user="root", password="1234", db="python", charset="utf8")
+    cur = conn.cursor()
+
     while page < max:
         for href in get_links(base_list_url + str(page)):
-            url = base_url + href
+            try:
+                url = base_url + href
 
-            html = urllib.request.urlopen(url)
-            source = html.read()
+                html = urllib.request.urlopen(url, timeout=5)
+                source = html.read()
 
-            soup = BeautifulSoup(source, "html.parser")
+                soup = BeautifulSoup(source, "html.parser")
+            except Exception as e:
+                print(e)
+                save_log(url, str(e))
 
             # 에러 핸들링, (SQL, HTML 속성, 기타 오류)
             try:
@@ -258,12 +265,12 @@ if __name__ == "__main__":
     num = multiprocessing.Value("i", 0)
     process = []
     max_page = get_max_page() # 전체 페이지 수
-    #max_page = 2000
+    max_page = 128
     process_count = 8 # 프로세스 수
     start_time = time.time()
 
     # p = multiprocessing.Pool(processes=process_count)
-    # p.map(get_item_data, get_count(max_page, process_count))
+    # p.map(get_item_data, get_count(max_page, process_count, num, True))
 
     for c in get_count(max_page, process_count):
         # args:
